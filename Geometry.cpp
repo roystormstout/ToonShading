@@ -121,9 +121,29 @@ void Geometry::draw(int program) {
 void Geometry::translate(glm::vec3 move) {
 	offset += move;
 	toWorld = glm::translate(glm::mat4(1.0f), move)*toWorld;
-	
+	printf("offset to: %f %f %f\n", offset.x, offset.y, offset.z);
 }
 
 void Geometry::rotate() {
 	toWorld = toWorld * glm::rotate(glm::mat4(1.0f), 1.0f / 180.0f * glm::pi<float>(), glm::vec3(0.0f, 1.0f, 0.0f));
+}
+
+
+//TODO: The problem is that the viewToWorldCoordTransform function is not mapped correctly to the screen location
+void Geometry::move() {
+	toWorld = glm::lookAt(offset, destination, glm::vec3(0.0f, 1.0f, 0.0f));
+	//toWorld = glm::lookAt(offset, destination, glm::vec3(0.0f, 1.0f, 0.0f));
+	printf("dest::%f %f %f\n", destination.x, destination.y, destination.z);
+	destination = { destination.z,destination.y,destination.x };
+	glm::vec3 forwardVector = destination*100.0f - offset;
+
+	forwardVector = glm::normalize(forwardVector);
+
+	printf("forward to: %f %f %f\n", forwardVector.x, forwardVector.y, forwardVector.z);
+
+
+	//moving forward :
+	translate(forwardVector);
+
+
 }

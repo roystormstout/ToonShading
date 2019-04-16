@@ -37,9 +37,9 @@ public:
 // This just looks nicer since it's easy to tell what coordinates/indices belong where.
 const GLfloat vertices[8][3] = {
 	// "Front" vertices
-	{-2.0, -2.0,  2.0}, {2.0, -2.0,  2.0}, {2.0,  2.0,  2.0}, {-2.0,  2.0,  2.0},
+	{-10.0, -10.0,  10.0}, {10.0, -10.0,  10.0}, {10.0,  10.0,  10.0}, {-10.0,  10.0,  10.0},
 	// "Back" vertices
-	{-2.0, -2.0, -2.0}, {2.0, -2.0, -2.0}, {2.0,  2.0, -2.0}, {-2.0,  2.0, -2.0}
+	{-10.0, -10.0, -10.0}, {10.0, -10.0, -10.0}, {10.0,  10.0, -10.0}, {-10.0,  10.0, -10.0}
 };
 
 // Note that GL_QUADS is deprecated in modern OpenGL (and removed from OSX systems).

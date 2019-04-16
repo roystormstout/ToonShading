@@ -10,6 +10,7 @@
 #include <GL/glew.h>
 #endif
 #include <GLFW/glfw3.h>
+#include <math.h>
 #include "Cube.h"
 #include "shader.h"
 #include "Geometry.h"
@@ -28,6 +29,9 @@ public:
 	static void idle_callback();
 	static void display_callback(GLFWwindow*);
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+
+	static glm::vec3 viewToWorldCoordTransform(int mouse_x, int mouse_y);
 };
 
 #endif

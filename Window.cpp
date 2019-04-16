@@ -15,7 +15,7 @@ GLint shaderProgram, toonShaderProgram;
 
 #define TEAPOT_PATH "../teapot.obj"
 // Default camera parameters
-glm::vec3 Window::cam_pos = { 0.0f, 10.0f, 0.0f };		// e  | Position of camera
+glm::vec3 Window::cam_pos = { 0.0f, 20.0f, 0.0f };		// e  | Position of camera
 glm::vec3 cam_look_at(0.0f, 0.0f, 0.0f);	// d  | This is where the camera looks at
 glm::vec3 cam_up(0.0f, 0.0f, -1.0f);			// up | What orientation "up" is
 
@@ -119,10 +119,10 @@ void Window::display_callback(GLFWwindow* window)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Use the shader of programID
-	//glUseProgram(shaderProgram);
+	glUseProgram(shaderProgram);
 	
 	// Render the cube
-	//cube->draw(shaderProgram);
+	cube->draw(shaderProgram);
 	glUseProgram(toonShaderProgram);
 	teapot->draw(toonShaderProgram);
 	// Gets events, including input such as keyboard and mouse or window resizing
@@ -143,4 +143,38 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
 	}
+
+
+}
+
+void Window::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+	{
+		double xpos, ypos;
+		//getting cursor position
+		glfwGetCursorPos(window, &xpos, &ypos);
+		printf("Cursor Position at %f: %f \n", xpos, ypos);
+		teapot->setDestination(viewToWorldCoordTransform(xpos, ypos));
+		teapot->move();
+
+		//std::cout << "Cursor Position at (" << xpos << " : " << ypos << std::endl;
+	}
+}
+
+// SCREEN SPACE: mouse_x and mouse_y are screen space
+glm::vec3 Window::viewToWorldCoordTransform(int mouse_x, int mouse_y) {
+	// NORMALISED DEVICE SPACE
+	double x = 2.0 * mouse_x / Window::width -1;
+	double y = 2.0 * mouse_y / Window::height - 1;
+
+	// HOMOGENEOUS SPACE
+	glm::vec4 screenPos = glm::vec4(x, -y, -1.0f, 1.0f);
+
+	// Projection/Eye Space
+	glm::mat4 ProjectView = Window::P * Window::V;
+	glm::mat4 viewProjectionInverse = inverse(ProjectView);
+
+	glm::vec4 worldPos = viewProjectionInverse * screenPos;
+	return glm::vec3(worldPos.z,0, worldPos.x);
 }

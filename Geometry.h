@@ -10,9 +10,10 @@
 #include <GLFW/glfw3.h>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "Movable.h"
 #include "Window.h"
 
-class Geometry
+class Geometry : public Movable
 {
 private:
 	std::vector<glm::vec3> vet_normals;
@@ -24,7 +25,6 @@ private:
 	std::vector<glm::vec3> colors;
 	
 public:
-
 
 	glm::vec3 preset_color;
 	glm::vec3 offset;
@@ -42,5 +42,6 @@ public:
 	void update();
 	void translate(glm::vec3 move);
 	void rotate();
+	void move();
 };
 
