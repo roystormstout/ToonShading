@@ -8,7 +8,7 @@ Geometry::Geometry(const char *filepath, glm::vec3 color, glm::vec3 move)
 	
 	preset_color = color;
 	toWorld = glm::translate(glm::mat4(1.0f), move);
-	offset = { 0,0,0 };
+	currentPos = move;
 	light_dir = {-20.0f, -40.0f, 30.0f };
 	parse(filepath);
 	
@@ -119,9 +119,10 @@ void Geometry::draw(int program) {
 }
 
 void Geometry::translate(glm::vec3 move) {
-	offset += move;
+	currentPos += move;
 	toWorld = glm::translate(glm::mat4(1.0f), move)*toWorld;
-	printf("offset to: %f %f %f\n", offset.x, offset.y, offset.z);
+	//toWorld = toWorld*glm::translate(glm::mat4(1.0f), move);
+	printf("currentPos to: %f %f %f\n", currentPos.x, currentPos.y, currentPos.z);
 }
 
 void Geometry::rotate() {
@@ -129,21 +130,24 @@ void Geometry::rotate() {
 }
 
 
-//TODO: The problem is that the viewToWorldCoordTransform function is not mapped correctly to the screen location
+//TODO: substitute lookat with a rotation matrix, so the bug can be solved
 void Geometry::move() {
-	toWorld = glm::lookAt(offset, destination, glm::vec3(0.0f, 1.0f, 0.0f));
-	//toWorld = glm::lookAt(offset, destination, glm::vec3(0.0f, 1.0f, 0.0f));
-	printf("dest::%f %f %f\n", destination.x, destination.y, destination.z);
-	destination = { destination.z,destination.y,destination.x };
-	glm::vec3 forwardVector = destination*100.0f - offset;
+	//glm::vec3 worldPos = glm::vec3(toWorld * glm::vec4(currentPos, 1.0f));
+	//toWorld = glm::lookAt(worldPos, destination, glm::vec3(0.0f, 1.0f, 0.0f));
+	//glm::translate(glm::mat4(1.0f), move)*toWorld;
+	toWorld = glm::lookAt(currentPos, { destination.z,destination.y,destination.x }, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	forwardVector = glm::normalize(forwardVector);
+	//printf("worldPos::%f %f %f\n", destination.x, destination.y, destination.z);
+	printf("dest::%f %f %f\n", destination.x, destination.y, destination.z);
+	glm::vec3 forwardVector = destination - currentPos;
+
+	//forwardVector = glm::normalize(forwardVector);
 
 	printf("forward to: %f %f %f\n", forwardVector.x, forwardVector.y, forwardVector.z);
 
 
 	//moving forward :
 	translate(forwardVector);
-
+	//toWorld = orbit * toWorld;
 
 }

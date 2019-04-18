@@ -15,10 +15,12 @@ GLint shaderProgram, toonShaderProgram;
 
 #define TEAPOT_PATH "../teapot.obj"
 // Default camera parameters
-glm::vec3 Window::cam_pos = { 0.0f, 20.0f, 0.0f };		// e  | Position of camera
+glm::vec3 Window::cam_pos = { 0.0f, 15.0f, 0.0f };		// e  | Position of camera
 glm::vec3 cam_look_at(0.0f, 0.0f, 0.0f);	// d  | This is where the camera looks at
 glm::vec3 cam_up(0.0f, 0.0f, -1.0f);			// up | What orientation "up" is
 
+float farPlane = 100.0f;
+float nearPlane = 1.0f;
 int Window::width;
 int Window::height;
 
@@ -39,6 +41,7 @@ void Window::initialize_objects()
 void Window::clean_up()
 {
 	delete(cube);
+	delete(teapot);
 	glDeleteProgram(shaderProgram);
 }
 
@@ -101,7 +104,7 @@ void Window::resize_callback(GLFWwindow* window, int width, int height)
 
 	if (height > 0)
 	{
-		P = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 1000.0f);
+		P = glm::perspective(45.0f, (float)width / (float)height, nearPlane, farPlane);
 		V = glm::lookAt(cam_pos, cam_look_at, cam_up);
 	}
 }
@@ -109,7 +112,7 @@ void Window::resize_callback(GLFWwindow* window, int width, int height)
 void Window::idle_callback()
 {
 	// Call the update function the cube
-	cube->update();
+	//cube->update();
 	teapot->update();
 }
 
@@ -155,7 +158,11 @@ void Window::mouse_button_callback(GLFWwindow* window, int button, int action, i
 		//getting cursor position
 		glfwGetCursorPos(window, &xpos, &ypos);
 		printf("Cursor Position at %f: %f \n", xpos, ypos);
-		teapot->setDestination(viewToWorldCoordTransform(xpos, ypos));
+		glm::vec3 new_dest = viewToWorldCoordTransform(xpos, ypos);
+		teapot->setDestination(new_dest);
+		//cam_pos += glm::vec3(new_dest.z, new_dest.y, new_dest.x);
+		//cam_look_at += glm::vec3(new_dest.z, new_dest.y, new_dest.x);
+		//V = glm::lookAt(cam_pos, cam_look_at, cam_up);
 		teapot->move();
 
 		//std::cout << "Cursor Position at (" << xpos << " : " << ypos << std::endl;
@@ -167,14 +174,21 @@ glm::vec3 Window::viewToWorldCoordTransform(int mouse_x, int mouse_y) {
 	// NORMALISED DEVICE SPACE
 	double x = 2.0 * mouse_x / Window::width -1;
 	double y = 2.0 * mouse_y / Window::height - 1;
-
+	//printf("normalized cursor to: %f %f \n", x,y);
 	// HOMOGENEOUS SPACE
-	glm::vec4 screenPos = glm::vec4(x, -y, -1.0f, 1.0f);
+	//glm::vec4 screenPos = glm::vec4(x, -y, -1.0f, 1.0f);
+	double depth = (farPlane + nearPlane) / (farPlane-nearPlane) + (1 / cam_pos.y) * (-2 * farPlane) / (farPlane - nearPlane);
+	glm::vec4 screenPos = glm::vec4(x, -y, depth, 1.0f);
 
 	// Projection/Eye Space
 	glm::mat4 ProjectView = Window::P * Window::V;
 	glm::mat4 viewProjectionInverse = inverse(ProjectView);
 
 	glm::vec4 worldPos = viewProjectionInverse * screenPos;
-	return glm::vec3(worldPos.z,0, worldPos.x);
+	//printf("world pos map to: %f %f %f\n", worldPos.x, worldPos.y, worldPos.z);
+	glm::vec3 realPos = glm::vec3(worldPos.x / worldPos.w, worldPos.y / worldPos.w, worldPos.z / worldPos.w);
+	printf("world pos remap to: %f %f %f\n", realPos.x, realPos.y, realPos.z);
+
+	return realPos;
+	//return glm::vec3(worldPos.z, 0, worldPos.x);
 }

@@ -27,7 +27,7 @@ private:
 public:
 
 	glm::vec3 preset_color;
-	glm::vec3 offset;
+	glm::vec3 currentPos;
 	glm::vec3 light_dir;
 	glm::mat4 toWorld;
 	GLuint VAO, VBO, EBO, color, NBO;
