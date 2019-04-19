@@ -59,10 +59,10 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="packages.config" />
-    <None Include="toonshader.vert">
+    <None Include="..\toonshader.frag">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="toonshader.frag">
+    <None Include="..\toonshader.vert">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

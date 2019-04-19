@@ -99,6 +99,7 @@ void Geometry::setup() {
 
 void Geometry::update()
 {
+	rotate();
 }
 
 void Geometry::draw(int program) {
@@ -135,7 +136,7 @@ void Geometry::move() {
 	//glm::vec3 worldPos = glm::vec3(toWorld * glm::vec4(currentPos, 1.0f));
 	//toWorld = glm::lookAt(worldPos, destination, glm::vec3(0.0f, 1.0f, 0.0f));
 	//glm::translate(glm::mat4(1.0f), move)*toWorld;
-	toWorld = glm::lookAt(currentPos, { destination.z,destination.y,destination.x }, glm::vec3(0.0f, 1.0f, 0.0f));
+	//toWorld = glm::lookAt(currentPos, { destination.z,destination.y,destination.x }, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	//printf("worldPos::%f %f %f\n", destination.x, destination.y, destination.z);
 	printf("dest::%f %f %f\n", destination.x, destination.y, destination.z);
