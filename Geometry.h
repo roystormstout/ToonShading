@@ -28,6 +28,7 @@ public:
 
 	glm::vec3 preset_color;
 	glm::vec3 currentPos;
+	glm::vec3 currentOri;
 	glm::vec3 light_dir;
 	glm::mat4 toWorld;
 	GLuint VAO, VBO, EBO, color, NBO;
@@ -41,7 +42,7 @@ public:
 	void setup();
 	void update();
 	void translate(glm::vec3 move);
-	void rotate();
+	void rotate(float angle, glm::vec3 axis);
 	void move();
 };
 

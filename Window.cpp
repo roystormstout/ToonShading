@@ -160,6 +160,10 @@ void Window::mouse_button_callback(GLFWwindow* window, int button, int action, i
 		printf("Cursor Position at %f: %f \n", xpos, ypos);
 		glm::vec3 new_dest = viewToWorldCoordTransform(xpos, ypos);
 		teapot->setDestination(new_dest);
+		float angle = glm::acos(glm::dot(glm::normalize(new_dest - teapot->currentPos), teapot->currentOri));
+		printf("rotate angle = %f", angle);
+		glm::vec3 axis = glm::cross(teapot->currentOri, glm::normalize(new_dest - teapot->currentPos));
+		teapot->rotate(angle, axis);
 		//cam_pos += glm::vec3(new_dest.z, new_dest.y, new_dest.x);
 		//cam_look_at += glm::vec3(new_dest.z, new_dest.y, new_dest.x);
 		//V = glm::lookAt(cam_pos, cam_look_at, cam_up);

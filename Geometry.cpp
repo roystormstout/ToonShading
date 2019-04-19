@@ -9,6 +9,7 @@ Geometry::Geometry(const char *filepath, glm::vec3 color, glm::vec3 move)
 	preset_color = color;
 	toWorld = glm::translate(glm::mat4(1.0f), move);
 	currentPos = move;
+	currentOri = glm::vec3(1, 0, 0);
 	light_dir = {-20.0f, -40.0f, 30.0f };
 	parse(filepath);
 	
@@ -99,7 +100,6 @@ void Geometry::setup() {
 
 void Geometry::update()
 {
-	rotate();
 	move();
 }
 
@@ -124,11 +124,14 @@ void Geometry::translate(glm::vec3 move) {
 	currentPos += move*speed;
 	toWorld = glm::translate(glm::mat4(1.0f), move*speed)*toWorld;
 	//toWorld = toWorld*glm::translate(glm::mat4(1.0f), move);
-	printf("currentPos to: %f %f %f\n", currentPos.x, currentPos.y, currentPos.z);
+	//printf("currentPos to: %f %f %f\n", currentPos.x, currentPos.y, currentPos.z);
 }
 
-void Geometry::rotate() {
-	toWorld = toWorld * glm::rotate(glm::mat4(1.0f), 1.0f / 180.0f * glm::pi<float>(), glm::vec3(0.0f, 1.0f, 0.0f));
+void Geometry::rotate(float angle, glm::vec3 axis) {
+	//toWorld = toWorld * glm::rotate(glm::mat4(1.0f), 1.0f / 180.0f * glm::pi<float>(), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 rotM = glm::rotate(glm::mat4(1.0f), angle, axis);
+	toWorld = glm::translate(glm::mat4(1.0f), currentPos) * rotM * glm::translate(glm::mat4(1.0f), -currentPos) * toWorld;
+	currentOri = glm::vec3(glm::vec4(currentOri, 0) * rotM);
 }
 
 
@@ -141,16 +144,17 @@ void Geometry::move() {
 
 	//printf("worldPos::%f %f %f\n", destination.x, destination.y, destination.z);
 
-	printf("dest::%f %f %f\n", destination.x, destination.y, destination.z);
+	//printf("dest::%f %f %f\n", destination.x, destination.y, destination.z);
 	glm::vec3 forwardVector = destination - currentPos;
 	if(glm::length(forwardVector)>0.1f)
 		forwardVector = glm::normalize(forwardVector);
 
-	printf("forward to: %f %f %f\n", forwardVector.x, forwardVector.y, forwardVector.z);
-
+	//printf("forward to: %f %f %f\n", forwardVector.x, forwardVector.y, forwardVector.z);
 
 	//moving forward :
 	translate(forwardVector);
 	//toWorld = orbit * toWorld;
+
+	
 
 }
