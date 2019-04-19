@@ -100,6 +100,7 @@ void Geometry::setup() {
 void Geometry::update()
 {
 	rotate();
+	move();
 }
 
 void Geometry::draw(int program) {
@@ -120,8 +121,8 @@ void Geometry::draw(int program) {
 }
 
 void Geometry::translate(glm::vec3 move) {
-	currentPos += move;
-	toWorld = glm::translate(glm::mat4(1.0f), move)*toWorld;
+	currentPos += move*speed;
+	toWorld = glm::translate(glm::mat4(1.0f), move*speed)*toWorld;
 	//toWorld = toWorld*glm::translate(glm::mat4(1.0f), move);
 	printf("currentPos to: %f %f %f\n", currentPos.x, currentPos.y, currentPos.z);
 }
@@ -139,10 +140,11 @@ void Geometry::move() {
 	//toWorld = glm::lookAt(currentPos, { destination.z,destination.y,destination.x }, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	//printf("worldPos::%f %f %f\n", destination.x, destination.y, destination.z);
+
 	printf("dest::%f %f %f\n", destination.x, destination.y, destination.z);
 	glm::vec3 forwardVector = destination - currentPos;
-
-	//forwardVector = glm::normalize(forwardVector);
+	if(glm::length(forwardVector)>0.1f)
+		forwardVector = glm::normalize(forwardVector);
 
 	printf("forward to: %f %f %f\n", forwardVector.x, forwardVector.y, forwardVector.z);
 

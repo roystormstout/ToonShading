@@ -20,8 +20,8 @@ public:
 	}
 
 protected:
-	float speed = 1.0;
+	float speed = 0.2f;
 	bool isMoving;
-	glm::vec3 destination;
+	glm::vec3 destination = {0.0f,0.0f,0.0f};
 };
 
