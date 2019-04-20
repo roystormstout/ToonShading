@@ -6,14 +6,14 @@ Geometry * teapot;
 GLint shaderProgram, toonShaderProgram;
 
 // On some systems you need to change this to the absolute path
-#define VERTEX_SHADER_PATH "../shader.vert"
-#define FRAGMENT_SHADER_PATH "../shader.frag"
+#define VERTEX_SHADER_PATH "../shaders/shader.vert"
+#define FRAGMENT_SHADER_PATH "../shaders/shader.frag"
 
-#define VERTEX_TOON_PATH "../toonshader.vert"
-#define FRAGMENT_TOON_PATH "../toonshader.frag"
+#define VERTEX_TOON_PATH "../shaders/toonshader.vert"
+#define FRAGMENT_TOON_PATH "../shaders/toonshader.frag"
 
 
-#define TEAPOT_PATH "../teapot.obj"
+#define TEAPOT_PATH "../models/teapot.obj"
 // Default camera parameters
 glm::vec3 Window::cam_pos = { 0.0f, 20.0f, 15.0f };		// e  | Position of camera
 glm::vec3 cam_look_at(0.0f, 0.0f, 0.0f);	// d  | This is where the camera looks at

@@ -12,7 +12,7 @@ Geometry::Geometry(const char *filepath, glm::vec3 color, glm::vec3 move)
 	currentOri = glm::vec3(1, 0, 0);
 	light_dir = {-20.0f, -40.0f, 30.0f };
 	parse(filepath);
-	
+	box = new BoundingBox(vertices, move);
 	setup();
 }
 
@@ -118,6 +118,8 @@ void Geometry::draw(int program) {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+
+	box->draw(program);
 }
 
 void Geometry::translate(glm::vec3 move) {
