@@ -131,7 +131,7 @@ void Geometry::rotate(float angle, glm::vec3 axis) {
 	//toWorld = toWorld * glm::rotate(glm::mat4(1.0f), 1.0f / 180.0f * glm::pi<float>(), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 rotM = glm::rotate(glm::mat4(1.0f), angle, axis);
 	toWorld = glm::translate(glm::mat4(1.0f), currentPos) * rotM * glm::translate(glm::mat4(1.0f), -currentPos) * toWorld;
-	currentOri = glm::vec3(glm::vec4(currentOri, 0) * rotM);
+	currentOri = glm::vec3(rotM * glm::vec4(currentOri, 0));
 }
 
 
