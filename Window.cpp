@@ -2,7 +2,7 @@
 
 const char* window_title = "GLFW Starter Project";
 Cube * cube;
-Geometry * teapot;
+Geometry * teapot,* bunny;
 GLint shaderProgram, toonShaderProgram;
 
 // On some systems you need to change this to the absolute path
@@ -14,12 +14,14 @@ GLint shaderProgram, toonShaderProgram;
 
 
 #define TEAPOT_PATH "../models/teapot.obj"
+
+#define HEAD_PATH "../models/head.obj"
 // Default camera parameters
-glm::vec3 Window::cam_pos = { 0.0f, 20.0f, 15.0f };		// e  | Position of camera
+glm::vec3 Window::cam_pos = { 0.0f, 50.0f, 15.0f };		// e  | Position of camera
 glm::vec3 cam_look_at(0.0f, 0.0f, 0.0f);	// d  | This is where the camera looks at
 glm::vec3 cam_up(0.0f, 0.0f, -1.0f);			// up | What orientation "up" is
 
-float farPlane = 100.0f;
+float farPlane = 1000.0f;
 float nearPlane = 1.0f;
 int Window::width;
 int Window::height;
@@ -31,6 +33,7 @@ void Window::initialize_objects()
 {
 	cube = new Cube();
 	teapot = new Geometry(TEAPOT_PATH, { 1.0f,0.7f,0.5f }, { 0.0f,0.0f,0.0f });
+	//bunny = new Geometry(TEAPOT_PATH, { 0.8f,0.7f,0.8f }, { 0.0f,0.0f,5.0f });
 	// Load the shader program. Make sure you have the correct filepath up top
 	shaderProgram = LoadShaders(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
 
@@ -42,6 +45,7 @@ void Window::clean_up()
 {
 	delete(cube);
 	delete(teapot);
+	delete(bunny);
 	glDeleteProgram(shaderProgram);
 }
 
@@ -114,6 +118,7 @@ void Window::idle_callback()
 	// Call the update function the cube
 	//cube->update();
 	teapot->update();
+	bunny->update();
 }
 
 void Window::display_callback(GLFWwindow* window)
@@ -128,6 +133,7 @@ void Window::display_callback(GLFWwindow* window)
 	cube->draw(shaderProgram);
 	glUseProgram(toonShaderProgram);
 	teapot->draw(toonShaderProgram);
+	bunny->draw(toonShaderProgram);
 	// Gets events, including input such as keyboard and mouse or window resizing
 	glfwPollEvents();
 	// Swap buffers

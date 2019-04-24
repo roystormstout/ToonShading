@@ -12,7 +12,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Movable.h"
 #include "Window.h"
-#include "BoundingBox.h"
+#include "Sphere.h"
 class Geometry : public Movable
 {
 private:
@@ -23,7 +23,7 @@ private:
 	std::vector<GLuint> indices;
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec3> colors;
-	BoundingBox * box;
+	Sphere * bounding_sphere;
 
 public:
 

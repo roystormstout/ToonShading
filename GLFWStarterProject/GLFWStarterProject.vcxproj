@@ -25,6 +25,7 @@
     <ClInclude Include="..\main.h" />
     <ClInclude Include="..\Movable.h" />
     <ClInclude Include="..\shader.h" />
+    <ClInclude Include="..\Sphere.h" />
     <ClInclude Include="..\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +34,7 @@
     <ClCompile Include="..\Geometry.cpp" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\shader.cpp" />
+    <ClCompile Include="..\Sphere.cpp" />
     <ClCompile Include="..\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

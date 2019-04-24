@@ -12,8 +12,12 @@ Geometry::Geometry(const char *filepath, glm::vec3 color, glm::vec3 move)
 	currentOri = glm::vec3(1, 0, 0);
 	light_dir = {-20.0f, -40.0f, 30.0f };
 	parse(filepath);
-	box = new BoundingBox(vertices, move);
+	const float *flat_array = &vertices[0].x;
+	float loc[] = { currentPos.x,currentPos.y,currentPos.z };
+
 	setup();
+
+	bounding_sphere = new Sphere(loc, flat_array, (unsigned)vertices.size(), sizeof(float[3]), 3, NULL, 500, 36, 18, true);
 }
 
 Geometry::~Geometry()
@@ -119,7 +123,7 @@ void Geometry::draw(int program) {
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	box->draw(program);
+	//bounding_sphere->draw();
 }
 
 void Geometry::translate(glm::vec3 move) {
