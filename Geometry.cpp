@@ -3,7 +3,7 @@
 
 
 
-Geometry::Geometry(const char *filepath, glm::vec3 color, glm::vec3 move)
+Geometry::Geometry(const char *filepath, glm::vec3 color, glm::vec3 move, bool isPlayer)
 {
 	
 	preset_color = color;
@@ -14,7 +14,7 @@ Geometry::Geometry(const char *filepath, glm::vec3 color, glm::vec3 move)
 	parse(filepath);
 	const float *flat_array = &vertices[0].x;
 	float loc[] = { currentPos.x,currentPos.y,currentPos.z };
-
+	this->isPlayer = isPlayer;
 	setup();
 
 	bounding_sphere = new Sphere(loc, flat_array, (unsigned)vertices.size(), sizeof(float[3]), 3, NULL, 500, 36, 18, true);
@@ -22,6 +22,49 @@ Geometry::Geometry(const char *filepath, glm::vec3 color, glm::vec3 move)
 
 Geometry::~Geometry()
 {
+}
+
+void normalize(std::vector<glm::vec3>& vertices) {
+	float min_x, max_x, min_y, max_y, min_z, max_z;
+	min_x = 100000.0f;
+	max_x = -100000.0f;
+	min_y = 100000.0f;
+	max_y = -100000.0f;
+	min_z = 100000.0f;
+	max_z = -100000.0f;
+	for (int i = 0; i < vertices.size(); i++) {
+		if (min_x > vertices[i].x)
+			min_x = vertices[i].x;
+		if (max_x < vertices[i].x)
+			max_x = vertices[i].x;
+
+		if (min_y > vertices[i].y)
+			min_y = vertices[i].y;
+		if (max_y < vertices[i].y)
+			max_y = vertices[i].y;
+
+		if (min_z > vertices[i].z)
+			min_z = vertices[i].z;
+		if (max_z < vertices[i].z)
+			max_z = vertices[i].z;
+	}
+	float mid_x = (min_x + max_x) / 2;
+	float mid_y = (min_y + max_y) / 2;
+	float mid_z = (min_z + max_z) / 2;
+
+	float range_x = max_x - min_x;
+	float max = range_x;
+	float range_y = max_y - min_y;
+	float range_z = max_z - min_z;
+	if (max < range_y)
+		max = range_y;
+	if (max < range_z)
+		max = range_z;
+	for (int i = 0; i < vertices.size(); i++) {
+		vertices[i].x = (vertices[i].x - mid_x);// *2 / max;
+		vertices[i].y = (vertices[i].y - mid_y);// *2 / max;
+		vertices[i].z = (vertices[i].z - mid_z);// *2 / max;
+	}
 }
 
 void Geometry::parse(const char *file1)
@@ -59,6 +102,8 @@ void Geometry::parse(const char *file1)
 			indices2.push_back({ f1 - 1,f3 - 1,f5 - 1 , f2 - 1});
 		}
 	}
+	//moving the object to the center
+	normalize(vertices);
 	calculate_normals();
 	printf("Obj sizes are %zd %zd\n", vet_normals.size(), vertices.size());
 	printf("%f %f %f\n", vet_normals[0].x, vet_normals[0].y, vet_normals[0].z);
@@ -104,7 +149,10 @@ void Geometry::setup() {
 
 void Geometry::update()
 {
-	move();
+	if (isPlayer) {
+		move();
+		bounding_sphere->setLocation(currentPos);
+	}
 }
 
 void Geometry::draw(int program) {
@@ -122,8 +170,8 @@ void Geometry::draw(int program) {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-
-	//bounding_sphere->draw();
+	const float lineColor[4] = { 1.0f,1.0f,1.0f,1.0f };
+	bounding_sphere->drawLines(lineColor);
 }
 
 void Geometry::translate(glm::vec3 move) {
@@ -140,8 +188,11 @@ void Geometry::rotate(float angle, glm::vec3 axis) {
 	currentOri = glm::vec3(rotM * glm::vec4(currentOri, 0));
 }
 
+bool Geometry::isColliding(Geometry* other) {
+	return bounding_sphere->isCollided(other->bounding_sphere);
+}
 
-//TODO: substitute lookat with a rotation matrix, so the bug can be solved
+
 void Geometry::move() {
 	//glm::vec3 worldPos = glm::vec3(toWorld * glm::vec4(currentPos, 1.0f));
 	//toWorld = glm::lookAt(worldPos, destination, glm::vec3(0.0f, 1.0f, 0.0f));

@@ -15,13 +15,13 @@ GLint shaderProgram, toonShaderProgram;
 
 #define TEAPOT_PATH "../models/teapot.obj"
 
-#define HEAD_PATH "../models/head.obj"
+#define BUNNY_PATH "../models/bunny.obj"
 // Default camera parameters
-glm::vec3 Window::cam_pos = { 0.0f, 50.0f, 15.0f };		// e  | Position of camera
+glm::vec3 Window::cam_pos = { 0.0f, 20.0f, 5.0f };		// e  | Position of camera
 glm::vec3 cam_look_at(0.0f, 0.0f, 0.0f);	// d  | This is where the camera looks at
 glm::vec3 cam_up(0.0f, 0.0f, -1.0f);			// up | What orientation "up" is
 
-float farPlane = 1000.0f;
+float farPlane = 100.0f;
 float nearPlane = 1.0f;
 int Window::width;
 int Window::height;
@@ -32,8 +32,8 @@ glm::mat4 Window::V;
 void Window::initialize_objects()
 {
 	cube = new Cube();
-	teapot = new Geometry(TEAPOT_PATH, { 1.0f,0.7f,0.5f }, { 0.0f,0.0f,0.0f });
-	//bunny = new Geometry(TEAPOT_PATH, { 0.8f,0.7f,0.8f }, { 0.0f,0.0f,5.0f });
+	teapot = new Geometry(TEAPOT_PATH, { 1.0f,0.7f,0.5f }, { 0.0f,0.0f,0.0f },true);
+	bunny = new Geometry(BUNNY_PATH, { 0.8f,0.7f,0.8f }, { 5.0f,0.0f,5.0f },false);
 	// Load the shader program. Make sure you have the correct filepath up top
 	shaderProgram = LoadShaders(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
 
@@ -119,6 +119,7 @@ void Window::idle_callback()
 	//cube->update();
 	teapot->update();
 	bunny->update();
+	teapot->isColliding(bunny);
 }
 
 void Window::display_callback(GLFWwindow* window)
@@ -163,11 +164,11 @@ void Window::mouse_button_callback(GLFWwindow* window, int button, int action, i
 		double xpos, ypos;
 		//getting cursor position
 		glfwGetCursorPos(window, &xpos, &ypos);
-		printf("Cursor Position at %f: %f \n", xpos, ypos);
+		//printf("Cursor Position at %f: %f \n", xpos, ypos);
 		glm::vec3 new_dest = viewToWorldCoordTransform(xpos, ypos);
 		teapot->setDestination(new_dest);
 		float angle = glm::acos(glm::dot(glm::normalize(new_dest - teapot->currentPos), teapot->currentOri));
-		printf("rotate angle = %f", angle);
+		//printf("rotate angle = %f \n", angle);
 		glm::vec3 axis = glm::cross(teapot->currentOri, glm::normalize(new_dest - teapot->currentPos));
 		teapot->rotate(angle, axis);
 		//cam_pos += glm::vec3(new_dest.z, new_dest.y, new_dest.x);

@@ -13,17 +13,18 @@
 #include <windows.h>    // include windows.h to avoid thousands of compile errors even though this class is not depending on Windows
 #endif
 
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
+
 
 #include <iostream>
 #include <iomanip>
 #include <cmath>
 #include "Sphere.h"
 
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 
 
 // constants //////////////////////////////////////////////////////////////////
@@ -49,15 +50,46 @@ Sphere::Sphere(float *out_center,
 	const unsigned *indices,
 	unsigned num_iterations, int sectors, int stacks, bool smooth) : interleavedStride(32)
 {
+	location = { out_center[0],out_center[1], out_center[2] };
+	
 	float radius = findRadius(out_center, vertices, num_vertices, bytes_per_vertex, ndim, indices, num_iterations);
-	printf("radius calculated: %f \n", radius);
+	//printf("radius calculated: %f \n", radius);
 	set(radius, sectors, stacks, smooth);
 }
 
 
+bool Sphere::isCollided(Sphere * other) {
+	const glm::vec3 checkObjPos = other->getLocation();
+	//printf(" other location calculated: %f \n", checkObjPos.x);
+	float distX = location.x - checkObjPos.x;
+	float distY = location.y - checkObjPos.y;
+	float distZ = location.z - checkObjPos.z;
+
+	float distToObject = sqrt(distX*distX + distY * distY + distZ * distZ);
+
+	float threshhold = getRadius()+other->getRadius();
+
+	//printf("distToObject is %f, threshold is %f \n", distToObject,threshhold);
+	if (distToObject < threshhold) {
+		if (!isColliding) {
+			printf("entering other's body\n");
+			isColliding = true;
+		}
+		return isColliding;
+	}
+	//TODO: CHANGE THIS PART TO:
+	//IF THE OBJ NOT COLLIDING WITH ALL OTHER OBJS THEN SET TO FALSE;
+	else {
+		isColliding = false;
+		return false;
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // setters
 ///////////////////////////////////////////////////////////////////////////////
+
+
 float Sphere::findRadius(float *out_center,
 	const void *vertices,
 	unsigned num_vertices,
@@ -219,6 +251,12 @@ void Sphere::setRadius(float radius)
     this->radius = radius;
     updateRadius();
 }
+
+
+void Sphere::setLocation(glm::vec3 loc) {
+	location = loc;
+}
+
 
 void Sphere::setSectorCount(int sectors)
 {

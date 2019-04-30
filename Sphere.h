@@ -12,11 +12,19 @@
 #ifndef GEOMETRY_SPHERE_H
 #define GEOMETRY_SPHERE_H
 
+#define GLFW_INCLUDE_GLEXT
+#ifdef __APPLE__
+#define GLFW_INCLUDE_GLCOREARB
+#else
+#include <GL/glew.h>
+#endif
+
+#include <GLFW/glfw3.h>
 #include <vector>
 #include <math.h>
 #include <stdlib.h>
 #include <float.h>
-
+#include <glm/vec3.hpp>
 class Sphere
 {
 public:
@@ -31,6 +39,9 @@ public:
 		const unsigned *indices = NULL,
 		unsigned num_iterations=10, int sectorCount = 36, int stackCount = 18, bool smooth = true);
     ~Sphere() {}
+
+	//collision detector
+	bool isCollided(Sphere * other);
 
     // getters/setters
     float getRadius() const                 { return radius; }
@@ -48,7 +59,8 @@ public:
     void setSectorCount(int sectorCount);
     void setStackCount(int stackCount);
     void setSmooth(bool smooth);
-
+	void setLocation(float* loc);
+	void setLocation(glm::vec3 loc);
     // for vertex data
     unsigned int getVertexCount() const     { return (unsigned int)vertices.size() / 3; }
     unsigned int getNormalCount() const     { return (unsigned int)normals.size() / 3; }
@@ -66,6 +78,8 @@ public:
     const float* getTexCoords() const       { return texCoords.data(); }
     const unsigned int* getIndices() const  { return indices.data(); }
     const unsigned int* getLineIndices() const  { return lineIndices.data(); }
+	const glm::vec3 getLocation() const { return location; }
+
 
     // for interleaved vertices: V/N/T
     unsigned int getInterleavedVertexCount() const  { return getVertexCount(); }    // # of vertices
@@ -103,12 +117,13 @@ private:
     int sectorCount;                        // longitude, # of slices
     int stackCount;                         // latitude, # of stacks
     bool smooth;
+	bool isColliding;
     std::vector<float> vertices;
     std::vector<float> normals;
     std::vector<float> texCoords;
     std::vector<unsigned int> indices;
     std::vector<unsigned int> lineIndices;
-
+	glm::vec3 location;
     // interleaved
     std::vector<float> interleavedVertices;
     int interleavedStride;                  // # of bytes to hop to the next vertex (should be 32 bytes)

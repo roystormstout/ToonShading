@@ -23,8 +23,8 @@ private:
 	std::vector<GLuint> indices;
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec3> colors;
-	Sphere * bounding_sphere;
-
+	
+	bool isPlayer;
 public:
 
 	glm::vec3 preset_color;
@@ -32,9 +32,10 @@ public:
 	glm::vec3 currentOri;
 	glm::vec3 light_dir;
 	glm::mat4 toWorld;
+	Sphere * bounding_sphere;
 	GLuint VAO, VBO, EBO, color, NBO;
 	GLuint uProjection, uModelview;
-	Geometry(const char *filepath, glm::vec3 color, glm::vec3 world);
+	Geometry(const char *filepath, glm::vec3 color, glm::vec3 world,bool isPlayer);
 
 	~Geometry();
 	void calculate_normals();
@@ -45,5 +46,7 @@ public:
 	void translate(glm::vec3 move);
 	void rotate(float angle, glm::vec3 axis);
 	void move();
+
+	bool isColliding(Geometry* other);
 };
 
