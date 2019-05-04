@@ -4,9 +4,9 @@
 // Sphere for OpenGL with (radius, sectors, stacks)
 // The min number of sectors is 3 and the min number of stacks are 2.
 //
-//  AUTHOR: Song Ho Ahn (song.ahn@gmail.com)
+//  AUTHOR: Song Ho Ahn (song.ahn@gmail.com) and Lingfeng Guo (lig012@ucsd.edu)
 // CREATED: 2017-11-01
-// UPDATED: 2018-12-13
+// UPDATED: 2019-05-01
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifdef _WIN32
